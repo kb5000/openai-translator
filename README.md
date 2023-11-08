@@ -14,32 +14,39 @@
     <img alt="MIT License" src="https://img.shields.io/github/license/yetone/openai-translator.svg?style=flat-square" />
   </a>
 
-  <!-- TypeScript Badge -->
-  <img alt="TypeScript" src="https://img.shields.io/badge/-TypeScript-blue?style=flat-square&logo=typescript&logoColor=white" />
+<!-- TypeScript Badge -->
 
-  <!-- Rust Badge -->
-  <img alt="Rust" src="https://img.shields.io/badge/-Rust-orange?style=flat-square&logo=rust&logoColor=white" />
+<img alt="TypeScript" src="https://img.shields.io/badge/-TypeScript-blue?style=flat-square&logo=typescript&logoColor=white" />
 
-  <a href="https://chrome.google.com/webstore/detail/openai-translator/ogjibjphoadhljaoicdnjnmgokohngcc" target="_blank">
+<!-- Rust Badge -->
+
+<img alt="Rust" src="https://img.shields.io/badge/-Rust-orange?style=flat-square&logo=rust&logoColor=white" />
+
+<a href="https://chrome.google.com/webstore/detail/openai-translator/ogjibjphoadhljaoicdnjnmgokohngcc" target="_blank">
     <img alt="Chrome" src="https://img.shields.io/chrome-web-store/stars/ogjibjphoadhljaoicdnjnmgokohngcc?color=blue&label=Chrome&style=flat-square&logo=google-chrome&logoColor=white" />
   </a>
 
-  <a href="https://addons.mozilla.org/en-US/firefox/addon/openai-translator/" target="_blank">
+<a href="https://addons.mozilla.org/en-US/firefox/addon/openai-translator/" target="_blank">
     <img alt="Firefox" src="https://img.shields.io/amo/stars/openai-translator?color=orange&label=Firefox&style=flat-square&logo=firefox&logoColor=white" />
   </a>
 
-  <a href="https://github.com/yetone/openai-translator/releases" target="_blank">
+<a href="https://github.com/yetone/openai-translator/releases" target="_blank">
     <img alt="macOS" src="https://img.shields.io/badge/-macOS-black?style=flat-square&logo=apple&logoColor=white" />
   </a>
 
-  <a href="https://github.com/yetone/openai-translator/releases" target="_blank">
+<a href="https://github.com/yetone/openai-translator/releases" target="_blank">
     <img alt="Windows" src="https://img.shields.io/badge/-Windows-blue?style=flat-square&logo=windows&logoColor=white" />
   </a>
 
-  <a href="https://github.com/yetone/openai-translator/releases" target="_blank">
+<a href="https://github.com/yetone/openai-translator/releases" target="_blank">
     <img alt="Linux" src="https://img.shields.io/badge/-Linux-yellow?style=flat-square&logo=linux&logoColor=white" />
   </a>
 </p>
+
+# OpenAI Translator for Firefox
+
+This extension is a Firefox-adapted fork of the [OpenAI Translator](https://github.com/openai-translator/openai-translator), aimed at bringing the same seamless translation experience to Firefox
+users. Credits to the original project—please support them. For this fork, contributions, and feedback for the Firefox plugin are welcome.
 
 # Why Yet another Translator
 
@@ -78,8 +85,8 @@ What began as a translation tool has now evolved to include surprisingly effecti
 
 # Preparation
 
--   (required) Apply for an OpenAI API key [here](https://platform.openai.com/account/api-keys) or [Azure OpenAI Service API Key](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=rest-api#retrieve-key-and-endpoint)
--   (optional) If you cannot access OpenAI, you can use the OpenAI API Proxy.
+- (required) Apply for an OpenAI API key [here](https://platform.openai.com/account/api-keys) or [Azure OpenAI Service API Key](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=rest-api#retrieve-key-and-endpoint)
+- (optional) If you cannot access OpenAI, you can use the OpenAI API Proxy.
 
 # Installation
 
@@ -102,38 +109,37 @@ What began as a translation tool has now evolved to include surprisingly effecti
 
 ### Troubleshooting
 
--   "OpenAI Translator" can’t be opened because the developer cannot be verified.
- 
-    <p align="center">
-      <img width="300" src="https://user-images.githubusercontent.com/1206493/223916804-45ce3f34-6a4a-4baf-a0c1-4ab5c54c521f.png" />
-    </p>
- 
-    -   Click the `Cancel` button, then go to the `Settings` -> `Privacy and Security` page, click the `Still Open` button, and then click the `Open` button in the pop-up window. After that, there will be no more pop-up warnings when opening `OpenAI Translator`. 🎉
-        <p align="center">
-          <img width="500" src="https://user-images.githubusercontent.com/1206493/223916970-9c99f15e-cf61-4770-b92d-4a78f980bb26.png" /> <img width="200" src="https://user-images.githubusercontent.com/1206493/223917449-ed1ac19f-c43d-4b13-9888-79ba46ceb862.png" />
-        </p>
- 
-    -   If you cannot find the above options in `Privacy & Security`, or get error prompts such as broken files with Apple Silicon machines. Open `Terminal.app` and enter the following command (you may need to enter a password halfway through), then restart `OpenAI Translator`:
+- "OpenAI Translator" can’t be opened because the developer cannot be verified.
 
-        ```sh
-        sudo xattr -d com.apple.quarantine /Applications/OpenAI\ Translator.app
-        ```
+  <p align="center">
+    <img width="300" src="https://user-images.githubusercontent.com/1206493/223916804-45ce3f34-6a4a-4baf-a0c1-4ab5c54c521f.png" />
+  </p>
 
--   If you encounter a permission prompt every time you open it, or if you cannot perform a shortcut translation, please go to `Settings` -> `Privacy & Security` -> `Supporting Features` to remove OpenAI Translator, and then re-add OpenAI Translator.
+  - Click the `Cancel` button, then go to the `Settings` -> `Privacy and Security` page, click the `Still Open` button, and then click the `Open` button in the pop-up window. After that, there will be no more pop-up warnings when opening `OpenAI Translator`. 🎉
 
     <p align="center">
-      <img width="500" src="https://user-images.githubusercontent.com/1206493/224536148-eec559bf-4d99-48c1-bbd3-2cc105aff084.png" />
-      <img width="600" src="https://user-images.githubusercontent.com/1206493/224536277-4200f58e-8dc0-4c01-a27a-a30d7d8dc69e.gif" />
+      <img width="500" src="https://user-images.githubusercontent.com/1206493/223916970-9c99f15e-cf61-4770-b92d-4a78f980bb26.png" /> <img width="200" src="https://user-images.githubusercontent.com/1206493/223917449-ed1ac19f-c43d-4b13-9888-79ba46ceb862.png" />
     </p>
+  - If you cannot find the above options in `Privacy & Security`, or get error prompts such as broken files with Apple Silicon machines. Open `Terminal.app` and enter the following command (you may need to enter a password halfway through), then restart `OpenAI Translator`:
+
+    ```sh
+    sudo xattr -d com.apple.quarantine /Applications/OpenAI\ Translator.app
+    ```
+- If you encounter a permission prompt every time you open it, or if you cannot perform a shortcut translation, please go to `Settings` -> `Privacy & Security` -> `Supporting Features` to remove OpenAI Translator, and then re-add OpenAI Translator.
+
+  <p align="center">
+    <img width="500" src="https://user-images.githubusercontent.com/1206493/224536148-eec559bf-4d99-48c1-bbd3-2cc105aff084.png" />
+    <img width="600" src="https://user-images.githubusercontent.com/1206493/224536277-4200f58e-8dc0-4c01-a27a-a30d7d8dc69e.gif" />
+  </p>
 
 ## Installing Desktop Clip Extensions
 
 For details, see [Desktop Clip Extension](./CLIP-EXTENSIONS.md)
 
-  <p align="center">
+<p align="center">
     <img width="600" src="https://user-images.githubusercontent.com/1206493/240355949-8f41d98d-f097-4ce4-a533-af60e1757ca1.gif" />
   </p>
- 
+
 ## Browser Extension
 
 1. Visit your Browser Extension Store to install this plugin:
@@ -146,13 +152,11 @@ For details, see [Desktop Clip Extension](./CLIP-EXTENSIONS.md)
        <img src="https://img.shields.io/amo/v/openai-translator?label=Firefox%20Add-on&style=for-the-badge&color=orange&logo=firefox&logoColor=white" />
      </a>
    </p>
-
 2. Click on the OpenAI Translator icon in the browser plugin list, and enter the obtained API KEY into the configuration interface that pops up from this plugin.
- 
+
    <p align="center">
      <img width="600" src="https://user-images.githubusercontent.com/1206493/222958165-159719b4-28a5-44a4-b700-567786df7f03.png" />
    </p>
-
 3. Refresh the page in the browser to enjoy the smooth translation experience 🎉!
 
 ## Configure Azure OpenAI Service

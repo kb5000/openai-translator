@@ -14,33 +14,39 @@
     <img alt="MIT License" src="https://img.shields.io/github/license/yetone/openai-translator.svg?style=flat-square" />
   </a>
 
-  <!-- TypeScript Badge -->
-  <img alt="TypeScript" src="https://img.shields.io/badge/-TypeScript-blue?style=flat-square&logo=typescript&logoColor=white" />
+<!-- TypeScript Badge -->
 
-  <!-- Rust Badge -->
-  <img alt="Rust" src="https://img.shields.io/badge/-Rust-orange?style=flat-square&logo=rust&logoColor=white" />
+<img alt="TypeScript" src="https://img.shields.io/badge/-TypeScript-blue?style=flat-square&logo=typescript&logoColor=white" />
 
-  <a href="https://chrome.google.com/webstore/detail/openai-translator/ogjibjphoadhljaoicdnjnmgokohngcc" target="_blank">
+<!-- Rust Badge -->
+
+<img alt="Rust" src="https://img.shields.io/badge/-Rust-orange?style=flat-square&logo=rust&logoColor=white" />
+
+<a href="https://chrome.google.com/webstore/detail/openai-translator/ogjibjphoadhljaoicdnjnmgokohngcc" target="_blank">
     <img alt="Chrome" src="https://img.shields.io/chrome-web-store/stars/ogjibjphoadhljaoicdnjnmgokohngcc?color=blue&label=Chrome&style=flat-square&logo=google-chrome&logoColor=white" />
   </a>
 
-  <a href="https://addons.mozilla.org/en-US/firefox/addon/openai-translator/" target="_blank">
+<a href="https://addons.mozilla.org/en-US/firefox/addon/openai-translator/" target="_blank">
     <img alt="Firefox" src="https://img.shields.io/amo/stars/openai-translator?color=orange&label=Firefox&style=flat-square&logo=firefox&logoColor=white" />
   </a>
 
-  <a href="https://github.com/yetone/openai-translator/releases" target="_blank">
+<a href="https://github.com/yetone/openai-translator/releases" target="_blank">
     <img alt="macOS" src="https://img.shields.io/badge/-macOS-black?style=flat-square&logo=apple&logoColor=white" />
   </a>
 
-  <a href="https://github.com/yetone/openai-translator/releases" target="_blank">
+<a href="https://github.com/yetone/openai-translator/releases" target="_blank">
     <img alt="Windows" src="https://img.shields.io/badge/-Windows-blue?style=flat-square&logo=windows&logoColor=white" />
   </a>
 
-  <a href="https://github.com/yetone/openai-translator/releases" target="_blank">
+<a href="https://github.com/yetone/openai-translator/releases" target="_blank">
     <img alt="Linux" src="https://img.shields.io/badge/-Linux-yellow?style=flat-square&logo=linux&logoColor=white" />
   </a>
 
 </p>
+
+# OpenAI Translator for Firefox
+
+此扩展是从 [OpenAI Translator](https://github.com/openai-translator/openai-translator) 项目 fork 而来，旨在为 Firefox 用户带来同样流畅的翻译体验。请大家支持原作者，本项目将定期同步原项目并构建Firefox版本。
 
 # 为啥要造这个轮子？
 
@@ -75,8 +81,8 @@
 
 # 使用准备
 
--   （必须）申请 [OpenAI API Key](https://platform.openai.com/account/api-keys) 或 [Azure OpenAI Service API Key](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=rest-api#retrieve-key-and-endpoint)
--   （可选）如果无法访问 OpenAI，可以使用 OpenAI API Proxy
+- （必须）申请 [OpenAI API Key](https://platform.openai.com/account/api-keys) 或 [Azure OpenAI Service API Key](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=rest-api#retrieve-key-and-endpoint)
+- （可选）如果无法访问 OpenAI，可以使用 OpenAI API Proxy
 
 # 安装
 
@@ -93,42 +99,40 @@
 
 ### 手动安装
 
-1.  去 [Latest Release](https://github.com/yetone/openai-translator/releases/latest) 页面下载对应芯片以 `.dmg` 的安装包（Apple Silicon机器请使用aarch64版本，并注意执行下文`xattr`指令）
-2.  下载完成后双击安装包进行安装，然后将 `OpenAI Translator` 拖动到 `Applications` 文件夹。
-3.  开始使用吧！
+1. 去 [Latest Release](https://github.com/yetone/openai-translator/releases/latest) 页面下载对应芯片以 `.dmg` 的安装包（Apple Silicon机器请使用aarch64版本，并注意执行下文 `xattr`指令）
+2. 下载完成后双击安装包进行安装，然后将 `OpenAI Translator` 拖动到 `Applications` 文件夹。
+3. 开始使用吧！
 
 ### 故障排除
 
--   "OpenAI Translator" can’t be opened because the developer cannot be verified.
-    
-    <p align="center">
-      <img width="300" src="https://user-images.githubusercontent.com/1206493/223916804-45ce3f34-6a4a-4baf-a0c1-4ab5c54c521f.png" />
-    </p>
+- "OpenAI Translator" can’t be opened because the developer cannot be verified.
 
-    -   点击 `Cancel` 按钮，然后去 `设置` -> `隐私与安全性` 页面，点击 `仍要打开` 按钮，然后在弹出窗口里点击 `打开` 按钮即可，以后打开 `OpenAI Translator` 就再也不会有任何弹窗告警了 🎉
-        
-        <p align="center">
-          <img width="500" src="https://user-images.githubusercontent.com/1206493/223916970-9c99f15e-cf61-4770-b92d-4a78f980bb26.png" /> <img width="200" src="https://user-images.githubusercontent.com/1206493/223917449-ed1ac19f-c43d-4b13-9888-79ba46ceb862.png" />
-        </p>
+  <p align="center">
+    <img width="300" src="https://user-images.githubusercontent.com/1206493/223916804-45ce3f34-6a4a-4baf-a0c1-4ab5c54c521f.png" />
+  </p>
 
-    -   如果在 `隐私与安全性` 中找不到以上选项，或启动时提示文件损坏（Apple Silicon版本）。打开 `Terminal.app`，并输入以下命令（中途可能需要输入密码），然后重启 `OpenAI Translator` 即可：
-
-        ```sh
-        sudo xattr -d com.apple.quarantine /Applications/OpenAI\ Translator.app
-        ```
-
--   如果您每次打开它都遇到权限提示，或者无法执行快捷键划词翻译，请前往 `设置` -> `隐私与安全性` -> `辅助功能` 中删除 OpenAI Translator，然后重新添加 OpenAI Translator:
+  - 点击 `Cancel` 按钮，然后去 `设置` -> `隐私与安全性` 页面，点击 `仍要打开` 按钮，然后在弹出窗口里点击 `打开` 按钮即可，以后打开 `OpenAI Translator` 就再也不会有任何弹窗告警了 🎉
 
     <p align="center">
-      <img width="500" src="https://user-images.githubusercontent.com/1206493/224536148-eec559bf-4d99-48c1-bbd3-2cc105aff084.png" />
-      <img width="600" src="https://user-images.githubusercontent.com/1206493/224536277-4200f58e-8dc0-4c01-a27a-a30d7d8dc69e.gif" />
+      <img width="500" src="https://user-images.githubusercontent.com/1206493/223916970-9c99f15e-cf61-4770-b92d-4a78f980bb26.png" /> <img width="200" src="https://user-images.githubusercontent.com/1206493/223917449-ed1ac19f-c43d-4b13-9888-79ba46ceb862.png" />
     </p>
+  - 如果在 `隐私与安全性` 中找不到以上选项，或启动时提示文件损坏（Apple Silicon版本）。打开 `Terminal.app`，并输入以下命令（中途可能需要输入密码），然后重启 `OpenAI Translator` 即可：
+
+    ```sh
+    sudo xattr -d com.apple.quarantine /Applications/OpenAI\ Translator.app
+    ```
+- 如果您每次打开它都遇到权限提示，或者无法执行快捷键划词翻译，请前往 `设置` -> `隐私与安全性` -> `辅助功能` 中删除 OpenAI Translator，然后重新添加 OpenAI Translator:
+
+  <p align="center">
+    <img width="500" src="https://user-images.githubusercontent.com/1206493/224536148-eec559bf-4d99-48c1-bbd3-2cc105aff084.png" />
+    <img width="600" src="https://user-images.githubusercontent.com/1206493/224536277-4200f58e-8dc0-4c01-a27a-a30d7d8dc69e.gif" />
+  </p>
 
 ## 安装桌面端划词扩展
 
 详情请见 [桌面端划词扩展](./CLIP-EXTENSIONS-CN.md)
 
-  <p align="center">
+<p align="center">
     <img width="600" src="https://user-images.githubusercontent.com/1206493/240355949-8f41d98d-f097-4ce4-a533-af60e1757ca1.gif" />
   </p>
 
@@ -144,13 +148,11 @@
        <img src="https://img.shields.io/amo/v/openai-translator?label=Firefox%20Add-on&style=for-the-badge&color=orange&logo=firefox&logoColor=white" />
      </a>
    </p>
-
 2. 点击浏览器插件列表里的 OpenAI Translator 图标，把获取的 API KEY 填入此插件弹出的配置界面中
 
    <p align="center">
      <img width="600" src="https://user-images.githubusercontent.com/1206493/222958165-159719b4-28a5-44a4-b700-567786df7f03.png" />
    </p>
-
 3. 刷新浏览器页面，即可享受丝滑般的划词翻译体验 🎉
 
 ## 配置 Azure OpenAI Service
