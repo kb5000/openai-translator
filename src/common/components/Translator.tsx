@@ -709,7 +709,11 @@ function InnerTranslator(props: IInnerTranslatorProps) {
 
     useLazyEffect(
         () => {
-            setTokenCount(countTokens(editableText, settings?.apiModel))
+            ;(async () => {
+                // use dynamic import to reduce bundle size
+                const { countTokens } = await import('../token')
+                setTokenCount(countTokens(editableText, settings?.apiModel))
+            })()
         },
         [editableText],
         500

@@ -1,6 +1,7 @@
 import { Theme } from 'baseui-sd/theme'
-import { TranslateMode, Provider } from './translate'
+import { TranslateMode } from './translate'
 import { TTSProvider } from './tts/types'
+import { Provider } from './engines'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ISync {
@@ -48,7 +49,16 @@ export interface ISettings {
     apiURL: string
     apiURLPath: string
     apiModel: string
-    provider: Provider | 'OpenAI'
+    provider: Provider
+    chatgptModel: string
+    azureAPIKeys: string
+    azureAPIURL: string
+    azureAPIURLPath: string
+    azureAPIModel: string
+    miniMaxGroupID: string
+    miniMaxAPIKey: string
+    moonshotAPIKey: string
+    moonshotAPIModel: string
     autoTranslate: boolean
     defaultTranslateMode: Exclude<TranslateMode, 'big-bang'> | 'nop'
     defaultTargetLanguage: string

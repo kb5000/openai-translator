@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 import _ from 'underscore'
 import icon from '../assets/images/icon-large.png'
 import beams from '../assets/images/beams.jpg'
@@ -12,7 +12,7 @@ import { BaseProvider } from 'baseui-sd'
 import { Input } from 'baseui-sd/input'
 import { createForm } from './Form'
 import { Button } from 'baseui-sd/button'
-import { TranslateMode, Provider, APIModel } from '../translate'
+import { TranslateMode, APIModel } from '../translate'
 import { Select, Value, Option } from 'baseui-sd/select'
 import { Checkbox } from 'baseui-sd/checkbox'
 import { supportedLanguages } from '../lang'
@@ -21,7 +21,7 @@ import { createUseStyles } from 'react-jss'
 import clsx from 'clsx'
 import { ISettings, IThemedStyleProps, ThemeType } from '../types'
 import { useTheme } from '../hooks/useTheme'
-import { IoCloseCircle } from 'react-icons/io5'
+import { IoCloseCircle, IoRefreshSharp } from 'react-icons/io5'
 import { useTranslation } from 'react-i18next'
 import AppConfig from '../../../package.json'
 import { useSettings } from '../hooks/useSettings'
@@ -32,11 +32,11 @@ import { TTSProvider } from '../tts/types'
 import { getEdgeVoices } from '../tts/edge-tts'
 import { useThemeType } from '../hooks/useThemeType'
 import { Slider } from 'baseui-sd/slider'
-import { getUniversalFetch } from '../universal-fetch'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { actionService } from '../services/action'
 import { GlobalSuspense } from './GlobalSuspense'
 import { Modal, ModalBody, ModalHeader } from 'baseui-sd/modal'
+import { Provider, getEngine } from '../engines'
 
 const langOptions: Value = supportedLanguages.reduce((acc, [id, label]) => {
     return [
@@ -109,8 +109,8 @@ interface AutoTranslateCheckboxProps {
 }
 
 interface IProviderSelectorProps {
-    value?: Provider | 'OpenAI'
-    onChange?: (value: Provider | 'OpenAI') => void
+    value?: Provider
+    onChange?: (value: Provider) => void
 }
 
 function TranslateModeSelector({ value, onChange, onBlur }: ITranslateModeSelectorProps) {
@@ -543,105 +543,84 @@ interface APIModelOption {
     id: string
 }
 
-const openAIModelOptions: APIModelOption[] = [
-    { label: 'gpt-3.5-turbo', id: 'gpt-3.5-turbo' },
-    { label: 'gpt-3.5-turbo-0613', id: 'gpt-3.5-turbo-0613' },
-    { label: 'gpt-3.5-turbo-0301', id: 'gpt-3.5-turbo-0301' },
-    { label: 'gpt-3.5-turbo-16k', id: 'gpt-3.5-turbo-16k' },
-    { label: 'gpt-3.5-turbo-16k-0613', id: 'gpt-3.5-turbo-16k-0613' },
-    { label: 'gpt-4', id: 'gpt-4' },
-    { label: 'gpt-4-0314', id: 'gpt-4-0314' },
-    { label: 'gpt-4-0613', id: 'gpt-4-0613' },
-    { label: 'gpt-4-32k', id: 'gpt-4-32k' },
-    { label: 'gpt-4-32k-0314', id: 'gpt-4-32k-0314' },
-    { label: 'gpt-4-32k-0613', id: 'gpt-4-32k-0613' },
-]
-
 function APIModelSelector({ provider, value, onChange, onBlur }: APIModelSelectorProps) {
-    const fetcher = useMemo(() => getUniversalFetch(), [])
     const { t } = useTranslation()
     const [isLoading, setIsLoading] = useState(false)
     const [options, setOptions] = useState<APIModelOption[]>([])
     const [errMsg, setErrMsg] = useState<string>()
     const [isChatGPTNotLogin, setIsChatGPTNotLogin] = useState(false)
+    const [refreshFlag, refresh] = useReducer((x: number) => x + 1, 0)
+
     useEffect(() => {
         setIsChatGPTNotLogin(false)
         setErrMsg('')
         setOptions([])
-        if (provider === 'OpenAI') {
-            setOptions(openAIModelOptions)
-        } else if (provider === 'ChatGPT') {
-            setIsLoading(true)
-            try {
-                ;(async () => {
-                    const sessionResp = await fetcher(utils.defaultChatGPTAPIAuthSession, { cache: 'no-cache' })
-                    if (sessionResp.status !== 200) {
-                        setIsChatGPTNotLogin(true)
-                        setErrMsg('Failed to fetch ChatGPT Web accessToken')
-                        return
-                    }
-                    const sessionRespJsn = await sessionResp.json()
-                    const headers: Record<string, string> = {
-                        Authorization: `Bearer ${sessionRespJsn.accessToken}`,
-                    }
-                    const modelsResp = await fetcher(`${utils.defaultChatGPTWebAPI}/models`, {
-                        cache: 'no-cache',
-                        headers,
-                    })
-                    const modelsRespJsn = await modelsResp.json()
-                    if (!modelsRespJsn) {
-                        return
-                    }
-                    if (modelsResp.status !== 200) {
-                        if (modelsResp.status === 401) {
-                            setIsChatGPTNotLogin(true)
-                        }
-                        setErrMsg(modelsRespJsn.detail.message)
-                        return
-                    }
-                    const { models } = modelsRespJsn
-                    if (!models) {
-                        return
-                    }
-                    setOptions(
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        models.map((model: any) => ({
-                            label: `${model.title} (${model.tags.join(', ')})`,
-                            id: model.slug,
-                        }))
-                    )
-                })()
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (e: any) {
-                setErrMsg(JSON.stringify(e))
-            } finally {
-                setIsLoading(false)
+        const engine = getEngine(provider)
+        setIsLoading(true)
+        try {
+            ;(async () => {
+                const models = await engine.listModels()
+                setOptions(
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    models.map((model: any) => ({
+                        label: model.name,
+                        id: model.id,
+                    }))
+                )
+            })()
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (e: any) {
+            if (provider === 'ChatGPT' && JSON.stringify(e).includes('not login')) {
+                setIsChatGPTNotLogin(true)
             }
+            setErrMsg(JSON.stringify(e))
+        } finally {
+            setIsLoading(false)
         }
-    }, [fetcher, provider])
+    }, [provider, refreshFlag])
 
     return (
         <div>
-            <Select
-                isLoading={isLoading}
-                size='compact'
-                onBlur={onBlur}
-                searchable={false}
-                clearable={false}
-                value={
-                    value
-                        ? [
-                              {
-                                  id: value,
-                              },
-                          ]
-                        : undefined
-                }
-                onChange={(params) => {
-                    onChange?.(params.value[0].id as APIModel)
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 4,
                 }}
-                options={options}
-            />
+            >
+                <Select
+                    isLoading={isLoading}
+                    size='compact'
+                    onBlur={onBlur}
+                    searchable={false}
+                    clearable={false}
+                    value={
+                        value
+                            ? [
+                                  {
+                                      id: value,
+                                  },
+                              ]
+                            : undefined
+                    }
+                    onChange={(params) => {
+                        onChange?.(params.value[0].id as APIModel)
+                    }}
+                    options={options}
+                />
+                <Button
+                    size='compact'
+                    kind='secondary'
+                    onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        refresh()
+                    }}
+                >
+                    <IoRefreshSharp size={16} />
+                </Button>
+            </div>
             <div
                 style={{
                     display: 'flex',
@@ -931,6 +910,8 @@ function ProviderSelector({ value, onChange }: IProviderSelectorProps) {
         ? ([
               { label: 'OpenAI', id: 'OpenAI' },
               { label: 'Azure', id: 'Azure' },
+              { label: 'MiniMax', id: 'MiniMax' },
+              { label: 'Moonshot', id: 'Moonshot' },
           ] as {
               label: string
               id: Provider
@@ -939,6 +920,8 @@ function ProviderSelector({ value, onChange }: IProviderSelectorProps) {
               { label: 'OpenAI', id: 'OpenAI' },
               { label: 'ChatGPT (Web)', id: 'ChatGPT' },
               { label: 'Azure', id: 'Azure' },
+              { label: 'MiniMax', id: 'MiniMax' },
+              { label: 'Moonshot', id: 'Moonshot' },
           ] as {
               label: string
               id: Provider
@@ -1003,6 +986,15 @@ export function InnerSettings({ onSave }: IInnerSettingsProps) {
         apiURLPath: utils.defaultAPIURLPath,
         apiModel: utils.defaultAPIModel,
         provider: utils.defaultProvider,
+        chatgptModel: utils.defaultChatGPTModel,
+        azureAPIKeys: '',
+        azureAPIURL: utils.defaultAPIURL,
+        azureAPIURLPath: utils.defaultAPIURLPath,
+        azureAPIModel: utils.defaultAPIModel,
+        miniMaxGroupID: '',
+        miniMaxAPIKey: '',
+        moonshotAPIKey: '',
+        moonshotAPIModel: '',
         autoTranslate: utils.defaultAutoTranslate,
         defaultTranslateMode: 'translate',
         defaultTargetLanguage: utils.defaultTargetLanguage,
@@ -1201,33 +1193,26 @@ export function InnerSettings({ onSave }: IInnerSettingsProps) {
                 <FormItem name='provider' label={t('Default service provider')} required>
                     <ProviderSelector />
                 </FormItem>
-                {values.provider !== 'ChatGPT' && (
+                <div
+                    style={{
+                        display: values.provider === 'OpenAI' ? 'block' : 'none',
+                    }}
+                >
                     <FormItem
-                        required
+                        required={values.provider === 'OpenAI'}
                         name='apiKeys'
                         label={t('API Key')}
                         caption={
                             <div>
                                 {t('Go to the')}{' '}
-                                {values.provider === 'Azure' ? (
-                                    <a
-                                        target='_blank'
-                                        href='https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=rest-api#retrieve-key-and-endpoint'
-                                        rel='noreferrer'
-                                        style={linkStyle}
-                                    >
-                                        {t('Azure OpenAI Service page')}
-                                    </a>
-                                ) : (
-                                    <a
-                                        target='_blank'
-                                        href='https://platform.openai.com/account/api-keys'
-                                        rel='noreferrer'
-                                        style={linkStyle}
-                                    >
-                                        {t('OpenAI page')}
-                                    </a>
-                                )}{' '}
+                                <a
+                                    target='_blank'
+                                    href='https://platform.openai.com/account/api-keys'
+                                    rel='noreferrer'
+                                    style={linkStyle}
+                                >
+                                    {t('OpenAI page')}
+                                </a>{' '}
                                 {t(
                                     'to get your API Key. You can separate multiple API Keys with English commas to achieve quota doubling and load balancing.'
                                 )}
@@ -1236,22 +1221,136 @@ export function InnerSettings({ onSave }: IInnerSettingsProps) {
                     >
                         <Input autoFocus type='password' size='compact' name='apiKey' onBlur={onBlur} />
                     </FormItem>
-                )}
-                {values.provider !== 'Azure' && (
-                    <FormItem name='apiModel' label={t('API Model')} required>
-                        <APIModelSelector provider={values.provider} onBlur={onBlur} />
+                    <FormItem name='apiModel' label={t('API Model')} required={values.provider === 'OpenAI'}>
+                        <APIModelSelector provider='OpenAI' onBlur={onBlur} />
                     </FormItem>
-                )}
-                {values.provider !== 'ChatGPT' && (
-                    <>
-                        <FormItem required name='apiURL' label={t('API URL')}>
-                            <Input size='compact' onBlur={onBlur} />
-                        </FormItem>
-                        <FormItem required name='apiURLPath' label={t('API URL Path')}>
-                            <Input size='compact' />
-                        </FormItem>
-                    </>
-                )}
+                    <FormItem name='apiURL' label={t('API URL')} required={values.provider === 'OpenAI'}>
+                        <Input size='compact' onBlur={onBlur} />
+                    </FormItem>
+                    <FormItem name='apiURLPath' label={t('API URL Path')} required={values.provider === 'OpenAI'}>
+                        <Input size='compact' />
+                    </FormItem>
+                </div>
+                <div
+                    style={{
+                        display: values.provider === 'Azure' ? 'block' : 'none',
+                    }}
+                >
+                    <FormItem
+                        required={values.provider === 'Azure'}
+                        name='azureAPIKeys'
+                        label={t('API Key')}
+                        caption={
+                            <div>
+                                {t('Go to the')}{' '}
+                                <a
+                                    target='_blank'
+                                    href='https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=rest-api#retrieve-key-and-endpoint'
+                                    rel='noreferrer'
+                                    style={linkStyle}
+                                >
+                                    {t('Azure OpenAI Service page')}
+                                </a>{' '}
+                                {t(
+                                    'to get your API Key. You can separate multiple API Keys with English commas to achieve quota doubling and load balancing.'
+                                )}
+                            </div>
+                        }
+                    >
+                        <Input autoFocus type='password' size='compact' onBlur={onBlur} />
+                    </FormItem>
+                    <FormItem name='azureAPIModel' label={t('API Model')} required={values.provider === 'Azure'}>
+                        <APIModelSelector provider='OpenAI' onBlur={onBlur} />
+                    </FormItem>
+                    <FormItem name='azureAPIURL' label={t('API URL')} required={values.provider === 'Azure'}>
+                        <Input size='compact' onBlur={onBlur} />
+                    </FormItem>
+                    <FormItem name='azureAPIURLPath' label={t('API URL Path')} required={values.provider === 'Azure'}>
+                        <Input size='compact' />
+                    </FormItem>
+                </div>
+                <div
+                    style={{
+                        display: values.provider === 'ChatGPT' ? 'block' : 'none',
+                    }}
+                >
+                    <FormItem name='chatgptModel' label={t('API Model')} required={values.provider === 'ChatGPT'}>
+                        <APIModelSelector provider='ChatGPT' onBlur={onBlur} />
+                    </FormItem>
+                </div>
+                <div
+                    style={{
+                        display: values.provider === 'MiniMax' ? 'block' : 'none',
+                    }}
+                >
+                    <FormItem
+                        required={values.provider === 'MiniMax'}
+                        name='miniMaxGroupID'
+                        label='MiniMax Group ID'
+                        caption={
+                            <div>
+                                {t('Go to the')}{' '}
+                                <a
+                                    target='_blank'
+                                    href='https://api.minimax.chat/user-center/basic-information'
+                                    rel='noreferrer'
+                                    style={linkStyle}
+                                >
+                                    {t('MiniMax page')}
+                                </a>{' '}
+                                {t('to get your Group ID.')}
+                            </div>
+                        }
+                    >
+                        <Input size='compact' onBlur={onBlur} />
+                    </FormItem>
+                    <FormItem
+                        required={values.provider === 'MiniMax'}
+                        name='miniMaxAPIKey'
+                        label='MiniMax API Key'
+                        caption={
+                            <div>
+                                {t('Go to the')}{' '}
+                                <a
+                                    target='_blank'
+                                    href='https://api.minimax.chat/user-center/basic-information/interface-key'
+                                    rel='noreferrer'
+                                    style={linkStyle}
+                                >
+                                    {t('MiniMax page')}
+                                </a>{' '}
+                                {t('to get your API Key.')}
+                            </div>
+                        }
+                    >
+                        <Input autoFocus type='password' size='compact' onBlur={onBlur} />
+                    </FormItem>
+                </div>
+                <div
+                    style={{
+                        display: values.provider === 'Moonshot' ? 'block' : 'none',
+                    }}
+                >
+                    <FormItem
+                        required={values.provider === 'Moonshot'}
+                        name='moonshotAPIKey'
+                        label='Moonshot API Key'
+                        caption={
+                            <div>
+                                {t('Go to the')}{' '}
+                                <a target='_blank' href='https://www.moonshot.cn/' rel='noreferrer' style={linkStyle}>
+                                    Moonshot Page
+                                </a>{' '}
+                                {t('to get your API Key.')}
+                            </div>
+                        }
+                    >
+                        <Input autoFocus type='password' size='compact' onBlur={onBlur} />
+                    </FormItem>
+                    <FormItem name='moonshotAPIModel' label={t('API Model')} required={values.provider === 'Moonshot'}>
+                        <APIModelSelector provider='Moonshot' onBlur={onBlur} key={values.moonshotAPIKey} />
+                    </FormItem>
+                </div>
                 <FormItem name='defaultTranslateMode' label={t('Default Action')}>
                     <TranslateModeSelector onBlur={onBlur} />
                 </FormItem>
